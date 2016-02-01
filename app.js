@@ -40,7 +40,6 @@ var App = (function AppModule(window, document, undefined) {
             }
         }
 
-        setCanvasSize();
         window.addEventListener('resize', renderCanvas);
 
         // show all page btn
@@ -174,6 +173,11 @@ var App = (function AppModule(window, document, undefined) {
      * renderCanvas
      */
     function renderCanvas() {
+
+        if (typeof image === 'undefined' || typeof page === 'undefined') {
+            return false;
+        }
+
         var pageX, pageY, pageW, pageH,
             selX, selY, selW, selH;
 
@@ -236,10 +240,15 @@ var App = (function AppModule(window, document, undefined) {
      **************************************************************************/
     function destroy() {
         // clean navigation
-        // @TODO doesnt work???
         while ($nav.hasChildNodes()) {
             $nav.removeChild($nav.lastChild);
         }
+
+        current.selecton = undefined;
+        image = undefined;
+
+        // clean canvas
+        $ctx.clearRect(0, 0, $canvas.width, $canvas.height);
     }
 
 
