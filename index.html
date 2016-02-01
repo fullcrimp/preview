@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>article previewer</title>
+    </head>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <body>
+        <section class="page-preview-section">
+            <canvas class="page-preview-image" width="500" height="300"></canvas>
+        </section>
+        <nav>
+            <ul class="article-list-section"></ul>
+            <button class="btn-100">show all</button>
+        </nav>
+    </body>
+
+    <!-- models -->
+    <script src="scripts/models/article.js"></script>
+    <script src="scripts/models/page.js"></script>
+
+
+    <!-- modules and cotrollers -->
+    <script src="app.js"></script>
+    <!-- app initialisation -->
+    <script defer>
+            App.init('data/articles.json', 'data/test.png', {});
+    </script>
+</html>
