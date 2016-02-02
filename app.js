@@ -16,7 +16,13 @@ var App = (function AppModule(window, document, undefined) {
             selection: false,
             // animationInProgress: false,
             scale: 1,
-            shift: {x:0, y: 0},
+            page: {
+                left: undefined,
+                top: undefined,
+                width: undefined,
+                height: undefined
+            },
+            // shift: {x:0, y: 0},
         };
 
     // DOM references
@@ -149,7 +155,8 @@ var App = (function AppModule(window, document, undefined) {
         // canvas and elem ratios
         var canvasRatio = $canvas.width / $canvas.height,
             elem = current.selection ? current.selection : page,
-            elemRatio = elem.width / elem.height;
+            elemRatio = elem.width / elem.height,
+            centeringShiftLeft, centeringShiftTop;
 
         // selection area is wider than preview section
         if ( elemRatio > canvasRatio ) {
@@ -162,10 +169,11 @@ var App = (function AppModule(window, document, undefined) {
         current.scale = (current.scale < 1) ? current.scale : 1;
 
         // centering shift
-        current.shift = {
-            x: ($canvas.width - elem.width * current.scale) / 2,
-            y: ($canvas.height - elem.height * current.scale) / 2
-        };
+        centeringShiftLeft = ($canvas.width - elem.width * current.scale) / 2;
+        centeringShiftTop = ($canvas.height - elem.height * current.scale) / 2;
+
+        current.page.left = centeringShiftLeft - ( current.selection ? current.selection.left * current.scale : 0 );
+        current.page.top = centeringShiftTop - ( current.selection ? current.selection.top * current.scale : 0 );
     }
 
 
@@ -178,9 +186,6 @@ var App = (function AppModule(window, document, undefined) {
             return false;
         }
 
-        var pageX, pageY, pageW, pageH,
-            selX, selY, selW, selH;
-
         // resize canvas to parent element
         setCanvasSize();
 
@@ -189,31 +194,27 @@ var App = (function AppModule(window, document, undefined) {
 
         calculateScaleAndShift();
 
-        if (current.selection) {
-            pageX = current.shift.x - current.selection.left * current.scale;
-            pageY = current.shift.y - current.selection.top * current.scale;
-        } else {
-            pageX = current.shift.x;
-            pageY = current.shift.y;
-        }
-
-        pageW = page.width * current.scale;
-        pageH = page.height * current.scale;
-
         // page render
-        $ctx.drawImage(image, pageX, pageY, pageW, pageH);
+        $ctx.drawImage(image,
+            current.page.left,
+            current.page.top,
+            page.width * current.scale,
+            page.height * current.scale
+        );
 
         // selection coordinates calculation and render
         // with respect to current page shift
         if (current.selection) {
-            selX = pageX + current.selection.left * current.scale;
-            selY = pageY + current.selection.top * current.scale;
-            selW = current.selection.width * current.scale;
-            selH = current.selection.height * current.scale;
 
             // render selection
             $ctx.beginPath();
-            $ctx.rect(selX, selY, selW, selH);
+            $ctx.rect(
+                 current.page.left + current.selection.left * current.scale,
+                 current.page.top + current.selection.top * current.scale,
+                 current.selection.width * current.scale,
+                 current.selection.height * current.scale
+             );
+
             $ctx.fillStyle = CONFIG.selectionColor;
             $ctx.fill();
         }
