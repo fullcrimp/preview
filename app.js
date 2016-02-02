@@ -19,10 +19,7 @@ var App = (function AppModule(window, document, undefined) {
             page: {
                 left: undefined,
                 top: undefined,
-                width: undefined,
-                height: undefined
             },
-            // shift: {x:0, y: 0},
         };
 
     // DOM references
